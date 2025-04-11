@@ -9,7 +9,7 @@
   width:100%;
   height:60px;
   z-index:500;
-  background-color: #2aa3ce;
+  // background-color: #2aa3ce;
   background-position: right;
   border-bottom:1px solid rgba(0,0,0,0.15);
   font-size: 15px;
@@ -22,7 +22,7 @@
   position: absolute;
   top: 0;
   z-index: -1;
-  background-color: #61C6A2;
+  background-color: @aleido-green;
   // background:url("assets/top-bar-1080.jpg");
   // @media (min-width: 1920px) {
   //   background:url("assets/top-bar-2560.jpg");
@@ -36,6 +36,7 @@
   display: inline-block;
   background-size: contain;
   background-repeat: no-repeat;
+  margin-right: 1rem;
 }
 
 .navigation-inner {
@@ -54,6 +55,11 @@
     float:left;
   }
 }
+
+.navigation-product-name {
+  display: flex;
+}
+
 
 .navigation-left {
 	float:left;
