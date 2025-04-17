@@ -8,7 +8,7 @@ define(function(require) {
 
         events: {
             'click .asset-management-sidebar-new': 'onAddNewAssetClicked',
-            'click .asset-management-sidebar-temp': 'onTemporaryClicked',
+            'click .asset-management-sidebar-replace': 'onReplaceAssetClicked',
             'click .asset-management-sidebar-filter-button': 'onFilterButtonClicked',
             'click .sidebar-filter-clear': 'onClearSearchClicked',
             'keyup .asset-management-sidebar-filter-search': 'onSearchKeyup',
@@ -27,8 +27,12 @@ define(function(require) {
             Origin.router.navigateTo('assetManagement/new');
         },
 
+        // onReplaceAssetClicked: function() {
+        //     Origin.router.navigateTo('assetManagement/replace');
+        // },
+
         onTemporaryClicked: function() {
-            console.log("The temporary button has been sleected!");
+            console.log("The temporary button has been selected!");
         },
 
         onFilterButtonClicked: function(event) {

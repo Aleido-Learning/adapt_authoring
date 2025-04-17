@@ -5,6 +5,8 @@ define(function(require){
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
 
+  var ContentCollection = require('core/collections/contentCollection');
+
   var AssetManagementPreviewView = OriginView.extend({
 
     tagName: 'div',
@@ -15,7 +17,8 @@ define(function(require){
       'click a.confirm-select-asset' : 'selectAsset',
       'click .asset-preview-edit-button': 'onEditButtonClicked',
       'click .asset-preview-delete-button': 'onDeleteButtonClicked',
-      'click .asset-preview-restore-button': 'onRestoreButtonClicked'
+      'click .asset-preview-restore-button': 'onRestoreButtonClicked',
+      'click .asset-preview-replace-button': 'onReplaceButtonClicked'
     },
 
     preRender: function() {
@@ -35,6 +38,12 @@ define(function(require){
       Origin.router.navigateTo('assetManagement/' + assetId + '/edit');
     },
 
+    onReplaceButtonClicked: function(event) {
+      event.preventDefault();
+      var assetId = this.model.get('_id');
+      Origin.router.navigateTo('assetManagement/' + assetId + '/replace');
+    },
+
     onDeleteButtonClicked: function(event) {
       event.preventDefault();
 
@@ -45,30 +54,62 @@ define(function(require){
       });
     },
 
-    onDeleteConfirmed: function(confirmed) {
+    onDeleteConfirmed: async function(confirmed) {
       var self = this;
+      var permanentDelete = false;
 
-      if (confirmed) {
-        $.ajax({
-          url: 'api/asset/trash/' + self.model.get('_id'),
-          type: 'PUT',
-          success: function() {
-            if (Origin.permissions.hasPermissions(["*"])) {
-              self.model.set({_isDeleted: true});
-            } else {
-              self.model.trigger('destroy', self.model, self.model.collection);
-            }
-            Origin.trigger('assetManagement:assetPreviewView:delete');
-            self.remove();
-          },
-          error: function(data) {
-            Origin.Notify.alert({
-              type: 'error',
-              text: Origin.l10n.t('app.errordeleteasset', { message: data.message })
-            });
+      await $.ajax({
+        url: 'api/asset/uses/' + self.model.get('_id'),
+        type: 'GET',
+        success: function(data) {
+          try {
+           let parsed = JSON.parse(data);
+            console.log("✅ Parsed JSON:", parsed, parsed.courses.length, parsed.components.length);
+            if(parsed.components.length === 0) permanentDelete = true;
+          } catch (e) {
+            console.error("Failed to parse JSON:", e);
           }
-        });
-      }
+
+        },
+        error: function(data) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: Origin.l10n.t('app.errorrestoreasset', { message: data.message })
+          });
+        }
+      });
+
+      console.log(permanentDelete);
+      
+      // var _url = 'api/asset/trash/' + self.model.get('_id');
+      // if (permanentDelete === true) _url = 'api/asset/delete/' + self.model.get('_id');
+
+      // if (confirmed) {
+      //   $.ajax({
+      //     url: _url,
+      //     type: 'PUT',
+      //     success: function() {
+      //       if (Origin.permissions.hasPermissions(["*"])) {
+      //         self.model.set({_isDeleted: true});
+      //       } else {
+      //         self.model.trigger('destroy', self.model, self.model.collection);
+      //       }
+      //       if (permanentDelete === true) {
+      //         Origin.trigger('assetManagement:assetPreviewView:permanentdelete');
+      //       } else {
+      //           Origin.trigger('assetManagement:assetPreviewView:delete');
+      //       }
+      //       self.remove();
+
+      //        setTimeout(function() {
+      //         Origin.router.navigateTo('dashboard');
+      //         setTimeout(function() {
+      //           Origin.router.navigateTo('assetManagement');
+      //         }, 100);
+      //        }, 100);
+      //     }
+      //   });
+      // }
     },
 
     onRestoreButtonClicked: function(event) {

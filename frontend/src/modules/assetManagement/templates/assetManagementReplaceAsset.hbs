@@ -1,0 +1,25 @@
+<div class="asset-management-replace-asset-inner inner">
+    <!-- Begin upload form -->
+    <form class="asset-form forms asset-form" action="api/asset" method="post">
+        <div class="form-group">
+            <label for="file">
+                {{t 'app.assetreplacefile'}} <span class="req">*</span>
+                <span class="error"></span>
+            </label>
+            {{#if path}}
+            <div class="asset-management-replace-asset-file">
+                {{t 'app.fileuploaded'}}
+            </div>
+            {{else}}
+            <input type="file" class="asset-replace-file" name="file">
+            {{maxUploadSize}}
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-percent">0%</div>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </form>
+    <!-- end upload form -->
+</div>

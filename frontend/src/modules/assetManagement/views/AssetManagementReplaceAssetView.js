@@ -4,28 +4,20 @@ define(function(require){
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
 
-  var AssetManagementNewAssetView = OriginView.extend({
+  var AssetManagementReplaceAssetView = OriginView.extend({
 
 
-    className: 'asset-management-new-asset',
+    className: 'asset-management-replace-asset',
 
     events: {
-      'change .asset-file': 'onChangeFile',
+      
     },
 
     preRender: function() {
-        this.listenTo(Origin, 'assetManagement:newAsset', this.uploadAsset);
+        this.listenTo(Origin, 'assetManagement:replaceAsset', this.replaceAsset);
     },
 
     postRender: function() {
-      // tagging
-      this.$('#tags_control').tagsInput({
-        autocomplete_url: 'api/autocomplete/tag',
-        onAddTag: _.bind(this.onAddTag, this),
-        onRemoveTag: _.bind(this.onRemoveTag, this),
-        'minChars' : 3,
-        'maxChars' : 30
-      });
       // Set view to ready
       this.setViewToReady();
     },
@@ -34,12 +26,12 @@ define(function(require){
       var $title = this.$('.asset-title');
 
       // Default 'title' -- remove C:\fakepath if it is added
-      $title.val(this.$('.asset-file')[0].value.replace("C:\\fakepath\\", ""));
+      $title.val(this.$('.asset-replace-file')[0].value.replace("C:\\fakepath\\", ""));
     },
 
     validateInput: function () {
       var reqs = this.$('.required');
-      var uploadFile = this.$('.asset-file');
+      var uploadFile = this.$('.asset-replace-file');
       var validated = true;
       var uploadFileErrormsg = $(uploadFile).prev('label').find('span.error');
       $.each(reqs, function (index, el) {
@@ -65,46 +57,35 @@ define(function(require){
       return validated;
     },
 
-    uploadAsset: function() {
+    replaceAsset: function() {
 
       if (!this.validateInput()) {
         Origin.trigger('sidebar:resetButtons');
         return false;
       }
 
-      var title = this.$('.asset-title').val();
-      var description = this.$('.asset-description').val();
         // If model is new then uploadFile
-        if (this.model.isNew()) {
+        // if (this.model.isNew()) {
           this.uploadFile();
-          // Return false to prevent the page submitting
+        //   // Return false to prevent the page submitting
           return false;
-        } else {
+        // } else {
           // Else just update the title, description and tags
-          this.model.set({title: title, description: description});
-          this.model.save(null, {
-            error: function(model, response, options) {
-              Origin.Notify.alert({
-                type: 'error',
-                text: Origin.l10n.t('app.errorassetupdate')
-              });
-            },
-            success: function(model, response, options) {
-              Origin.router.navigateTo('assetManagement');
-            }
-          })
-        }
-        
+          // this.model.save(null, {
+          //   error: function(model, response, options) {
+          //     Origin.Notify.alert({
+          //       type: 'error',
+          //       text: Origin.l10n.t('app.errorassetupdate')
+          //     });
+          //   },
+          //   success: function(model, response, options) {
+          //     Origin.router.navigateTo('assetManagement');
+          //   }
+          // })
+        // }
     },
 
     uploadFile: function() {
-      // fix tags
-      var tags = [];
-      _.each(this.model.get('tags'), function (item) {
-        item._id && tags.push(item._id);
-      });
-      this.$('#tags').val(tags);
-
       var self = this;
       this.$('.asset-form').ajaxSubmit({
 
@@ -124,7 +105,7 @@ define(function(require){
         },
 
         success: function(data, status, xhr) {
-          Origin.trigger('assets:update');
+          Origin.trigger('assets:replace');
 
           self.model.set({_id: data._id});
           self.model.fetch().done(function (data) {
@@ -139,35 +120,11 @@ define(function(require){
       return false;
     },
 
-    onAddTag: function (tag) {
-      var model = this.model;
-      $.ajax({
-        url: 'api/content/tag',
-        method: 'POST',
-        data: { title: tag }
-      }).done(function (data) {
-        if (data && data._id) {
-          var tags = model.get('tags') || [];
-          tags.push({ _id: data._id, title: data.title });
-          model.set({ tags: tags });
-        }
-      });
-    },
-
-    onRemoveTag: function (tag) {
-      var tags = [];
-      _.each(this.model.get('tags'), function (item) {
-        if (item.title !== tag) {
-          tags.push(item);
-        }
-      });
-      this.model.set({ tags: tags });
-    }
 
   }, {
-    template: 'assetManagementNewAsset'
+    template: 'assetManagementReplaceAsset'
   });
 
-  return AssetManagementNewAssetView;
+  return AssetManagementReplaceAssetView;
 
 });
