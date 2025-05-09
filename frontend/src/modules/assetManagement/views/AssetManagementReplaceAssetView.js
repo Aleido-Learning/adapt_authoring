@@ -10,7 +10,7 @@ define(function(require){
     className: 'asset-management-replace-asset',
 
     events: {
-      
+      'change .asset-replace-file': 'onChangeFile',
     },
 
     preRender: function() {
@@ -118,6 +118,31 @@ define(function(require){
 
       // Return false to prevent the page submitting
       return false;
+    },
+
+    onAddTag: function (tag) {
+      var model = this.model;
+      $.ajax({
+        url: 'api/content/tag',
+        method: 'POST',
+        data: { title: tag }
+      }).done(function (data) {
+        if (data && data._id) {
+          var tags = model.get('tags') || [];
+          tags.push({ _id: data._id, title: data.title });
+          model.set({ tags: tags });
+        }
+      });
+    },
+
+    onRemoveTag: function (tag) {
+      var tags = [];
+      _.each(this.model.get('tags'), function (item) {
+        if (item.title !== tag) {
+          tags.push(item);
+        }
+      });
+      this.model.set({ tags: tags });
     },
 
 

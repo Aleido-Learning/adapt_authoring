@@ -11,10 +11,18 @@ define(function(require){
 
     events: {
       'change .asset-file': 'onChangeFile',
+      'mouseover .asset-use-icon': 'onShowUseInfo',
+      'mouseout .asset-use-icon': 'onHideUseInfo'
     },
+
+    permanentDelete: false,
+    uses: 'none',
 
     preRender: function() {
         this.listenTo(Origin, 'assetManagement:newAsset', this.uploadAsset);
+
+        this.$('.asset-use-info').html("");
+        this.checkUsage();
     },
 
     postRender: function() {
@@ -35,6 +43,63 @@ define(function(require){
 
       // Default 'title' -- remove C:\fakepath if it is added
       $title.val(this.$('.asset-file')[0].value.replace("C:\\fakepath\\", ""));
+    },
+
+    checkUsage: async function() {
+      var self = this;
+      this.permanentDelete = false;
+
+      await $.ajax({
+        url: 'api/asset/uses/' + self.model.get('_id'),
+        type: 'GET',
+        success: (data) => {
+          try {
+            let parsed = JSON.parse(data);
+
+            let usageStr = ""; // + parsed.courses.length + ', components: ' + parsed.components.length;
+            parsed.courses.forEach(course => {
+              usageStr += "<br/><b>" + course.title + "</b><br/>";
+
+              parsed.components.forEach(component => {
+                if(component.courseId === course.id) usageStr += "* " + component.title + "<br/>";
+              });
+            });
+
+            console.log("✅ Parsed JSON:", parsed, parsed.courses.length, parsed.components.length, usageStr);
+            this.$('.asset-use-info').html("");
+
+            if(parsed.components.length === 0) {
+              this.permanentDelete = true;
+              this.$('.asset-use-info').addClass('is-visible');
+            } else {
+              this.model.set('usage', "");
+              this.uses = usageStr;
+              this.$('.asset-use-icon').addClass('is-visible');
+              this.$('.asset-use-info').addClass('hover');
+            }
+            this.model.set('usage', this.uses);
+            this.$('.asset-use-info').html(this.uses);
+
+          } catch (e) {
+            console.error("Failed to parse JSON:", e);
+          }
+
+        },
+        error: (data) => {
+          Origin.Notify.alert({
+            type: 'error',
+            text: Origin.l10n.t('app.errorrestoreasset', { message: data.message })
+          });
+        }
+      });
+    },
+
+    onShowUseInfo: function() {
+      this.$('.asset-use-info').addClass('is-visible');
+    },
+
+    onHideUseInfo: function() {
+      this.$('.asset-use-info').removeClass('is-visible');
     },
 
     validateInput: function () {
