@@ -107,10 +107,10 @@ define(function(require){
 
         },
         error: (data) => {
-          Origin.Notify.alert({
-            type: 'error',
-            text: Origin.l10n.t('app.errorrestoreasset', { message: data.message })
-          });
+          // Origin.Notify.alert({
+          //   type: 'error',
+          //   text: Origin.l10n.t('app.errorrestoreasset', { message: data.message })
+          // });
         }
       });
     },
