@@ -1,0 +1,53 @@
+{
+  "outputPlugin": "adapt",
+  "dbType": "mongoose",
+  "auth": "local",
+  "root": "/home/laurahooper/Projects/AdaptAuthoring/aleido_authoring",
+  "sessionSecret": "2e8990180a4b9f90b8b5abee22f279bb52007eb72c04e3974ba6e904ef8ec25fcc6907db9821b2c5cba13826da2b662d36d8f91052525caa1aa377449291b09f",
+  "serverPort": 5000,
+  "serverName": "localhost",
+  "dataRoot": "data",
+  "authoringToolRepository": "https://github.com/AleidoUK/adapt_authoring.git",
+  "frameworkRepository": "https://github.com/AleidoUK/adapt_framework.git",
+  "frameworkRevision": "develop",
+  "dbName": "adapt-tenant-master",
+  "useConnectionUri": false,
+  "dbHost": "localhost",
+  "dbPort": 27017,
+  "dbUser": "",
+  "dbPass": "",
+  "dbAuthSource": "",
+  "useSmtp": false,
+  "maxLoginAttempts": 3,
+  "adapt-authoring-ui": {
+    "ckEditor": {
+      "extraAllowedContent": "span(*)[*]{*}"
+    }
+  },
+  "ckEditorHtmlSupport": {
+    "allow": [
+      {
+        "name": "^(blockquote|ul|ol|span|pre|code)$"
+      },
+      {
+        "name": ".*",
+        "classes": true,
+        "styles": true
+      },
+      {
+        "name": "^a$",
+        "attributes": {
+          "target": true,
+          "data-glossaryterm": true,
+          "data-open-resource": true,
+          "data-show-resource": true
+        }
+      }
+    ]
+  },
+  "maxFileUploadSize": "20MB",
+  "ckEditorEnterMode": "ENTER_P",
+  "masterTenantName": "develop",
+  "masterTenantID": "67ec00845450d2c6fb6ad9fc",
+  "isProduction": false
+}
