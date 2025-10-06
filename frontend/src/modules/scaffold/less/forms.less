@@ -89,8 +89,8 @@ div[data-type="Asset:image"], div[data-type="Asset:video"] {
   margin: 0 0.5rem;
   padding: 1rem 0 !important;
 }
-div[data-type=""], div[data-type="Text"], div[data-type="Number"] {
-  width: 100%;
+div[data-type=""], div[data-type="Text"], div[data-type="Number"], div[data-type="Select"] {
+  width: calc(100% - 40px);
   clear: both;
 }
 
@@ -112,6 +112,7 @@ div[name="_pdf"] {
   position: relative;
   padding: 10px 30px;
   // border: 1px solid @aleido-light-green;
+  float: left;
 
   &-object {
     padding: 8px 10px;
